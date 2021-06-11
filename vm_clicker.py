@@ -13,46 +13,38 @@ machine.lock_machine(session, LockType.shared)
 
 print('session state:', session.state)
 
-# session.console.mouse.put_mouse_event_absolute(250, 250, 0, 0, 1)
-# session.console.keyboard.put_keys("Hello, world!")
+def click():
+    global listening
+    if listening:
+        print('Clicking')
+        session.console.mouse.put_mouse_event_absolute(813, 405, 0, 0, 1)
+        session.console.mouse.put_mouse_event_absolute(813, 405, 0, 0, 0)
 
-# session.unlock_machine()
-
+global listening
 listening = False
 
 def on_move(x, y):
-    print('Pointer moved to {0}'.format(
-        (x, y)))
+    pass
 
 def on_click(x, y, button, pressed):
-    print('{0} at {1}'.format(
-        'Pressed' if pressed else 'Released',
-        (x, y)))
-    # if not pressed:
-    #     # Stop listener
-    #     return False
+    click()
 
 def on_scroll(x, y, dx, dy):
-    print('Scrolled {0} at {1}'.format(
-        'down' if dy < 0 else 'up',
-        (x, y)))
+    click()
 
 def on_press(key):
+    global listening
     if key == keyboard.Key.esc:
         listening = not listening
-        return False  # stop listener
-    print(key)
+        print('Listening:', listening)
+    click()
 
-mouse_listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+mouse_listener = mouse.Listener(on_scroll=on_scroll)
 keyboard_listener = keyboard.Listener(on_press=on_press)
 
 mouse_listener.start()
 keyboard_listener.start()
-# mouse_listener.join()
-# keyboard_listener.join()
-
-while(True):
-    while(listening):
-        continue
+mouse_listener.join()
+keyboard_listener.join()
 
 session.unlock_machine()
