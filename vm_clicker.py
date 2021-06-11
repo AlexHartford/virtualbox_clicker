@@ -39,7 +39,7 @@ def on_press(key):
         print('Listening:', listening)
     click()
 
-mouse_listener = mouse.Listener(on_scroll=on_scroll)
+mouse_listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
 keyboard_listener = keyboard.Listener(on_press=on_press)
 
 mouse_listener.start()
