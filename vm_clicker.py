@@ -60,20 +60,29 @@ def on_scroll(x, y, dx, dy):
         scroll_count += 1
 
 def on_press(key):
-    if key == keyboard.Key.shift_l:
-        session.console.mouse.put_mouse_event_absolute(1, 0, 0, 0, 2)
-    else:
+    global listening
+    if key == keyboard.Key.esc:
+        listening = not listening
+        print('Listening:', listening)
+        return
+    elif listening and key == keyboard.Key.shift_l:
+        session.console.mouse.put_mouse_event_absolute(x, y, 0, 0, 2)
+    elif listening and key == keyboard.Key.caps_lock:
+        session.console.keyboard.put_keys(press_keys=["F1"])
+        return
+    elif listening:
         click_press()
 
 def on_release(key):
     global listening
     if key == keyboard.Key.esc:
-        listening = not listening
-        print('Listening:', listening)
-    elif key == keyboard.Key.shift_l:
-        session.console.mouse.put_mouse_event_absolute(1, 0, 0, 0, 0)
+        return
+    elif listening and key == keyboard.Key.shift_l:
+        session.console.mouse.put_mouse_event_absolute(x, y, 0, 0, 0)
         print('Unstuck')
-    else:
+    elif listening and key == keyboard.Key.f1:
+        return
+    elif listening:
         click_release()
 
 mouse_listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
